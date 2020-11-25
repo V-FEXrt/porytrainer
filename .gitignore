@@ -1,0 +1,14 @@
+Makefile
+porytrainer.pro.user
+*.autosave
+*.stash
+*.o
+*.DS_Store
+porytrainer.app*
+porytrainer
+
+# Qt generated files
+ui_*.h
+moc_*.h
+moc_*.cpp
+qrc_*.cpp
