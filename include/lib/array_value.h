@@ -2,6 +2,8 @@
 #define INCLUDE_CORE_ARRAY_VALUE_H
 
 #include <string>
+#include <vector>
+#include <memory>
 
 namespace fex
 {
