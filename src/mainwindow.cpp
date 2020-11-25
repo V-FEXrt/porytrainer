@@ -118,6 +118,12 @@ void MainWindow::initUI(QString root) {
 
     ui_->listWidget_trainers->clear();
 
+    for (const auto& pair : ai_script_check_boxes_)
+    {
+        ui_->gridLayout_aiScriptOptions->removeWidget(pair.second.get());
+    }
+    ai_script_check_boxes_.clear();
+
     ui_->comboBox_trainerClasses->addItems(parser_util_->ReadDefines("include/constants/trainer_classes.h", "CLASS_"));
     ui_->comboBox_trainerPics->addItems(parser_util_->ReadDefines("include/constants/trainers.h", "TRAINER_PIC_"));
     ui_->comboBox_encounterMusic->addItems(parser_util_->ReadDefines("include/constants/trainers.h", "TRAINER_ENCOUNTER_MUSIC_"));
@@ -141,6 +147,45 @@ void MainWindow::initUI(QString root) {
         QString identifier = QString::fromStdString(trainer.identifier());
         ui_->listWidget_trainers->addItem(identifier);
         trainers_.insert(identifier, trainer);
+    }
+
+    // Add Script AI checkboxes
+    QStringList scripts = parser_util_->ReadDefines("include/constants/battle_ai.h", "AI_SCRIPT_");
+
+    int width = 4;
+    int height = 4;
+
+    if (scripts.size() > width * height)
+    {
+        // todo WARN # of scripts size too large
+    }
+
+    for (int i = 0; i < width; i++)
+    {
+        for (int j = 0; j < height; j++)
+        {
+            int index = i * height + j;
+            if (index >= scripts.size())
+            {
+                break;
+            }
+
+            QString script = scripts[index];
+
+            std::unique_ptr<QCheckBox> box = std::make_unique<QCheckBox>();
+
+            box->setToolTip(script);
+            QString trunc = script.mid(10); // 10 = len(AI_SCRIPT_)
+            if (trunc.length() > 12) {
+                trunc.chop(trunc.length() - 9);
+                trunc += "...";
+            }
+            box->setText(trunc);
+
+            ui_->gridLayout_aiScriptOptions->addWidget(box.get(), i, j);
+
+            ai_script_check_boxes_[script] = std::move(box);
+        }
     }
 
     clearUI();
@@ -168,6 +213,11 @@ void MainWindow::clearUI()
         pokemon_ui_items_[i].move_3->setCurrentText("");
         pokemon_ui_items_[i].move_4->setCurrentText("");
         pokemon_ui_items_[i].scene->clear();
+    }
+
+    for (const auto& pair : ai_script_check_boxes_)
+    {
+        pair.second->setChecked(false);
     }
 }
 
@@ -244,6 +294,11 @@ void MainWindow::on_listWidget_trainers_itemSelectionChanged()
             pokemon_ui_items_[ui_index].move_4->setCurrentText(QString::fromStdString(pokemon.moves()[3]));
         }
         ui_index++;
+    }
+
+    for (const std::string& ai_flag : trainer.ai_flags())
+    {
+        ai_script_check_boxes_[QString::fromStdString(ai_flag)]->setChecked(true);
     }
 }
 

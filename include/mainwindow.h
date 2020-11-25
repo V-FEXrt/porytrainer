@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QCheckBox>
 #include <QComboBox>
 #include <QSpinBox>
 #include <QGraphicsView>
@@ -56,6 +57,7 @@ private:
     QMap<QString, fex::TrainerEntry> trainers_;
     std::vector<PokemonUIItem> pokemon_ui_items_;
     std::unique_ptr<QGraphicsScene> trainer_scene_;
+    std::map<QString, std::unique_ptr<QCheckBox>> ai_script_check_boxes_;
 
 signals:
 };
