@@ -30,6 +30,10 @@ namespace fex
         {
             return values_;
         }
+        std::vector<ArrayValue> release_values()
+        {
+            return std::move(values_);
+        }
 
         std::string ToString() const
         {
