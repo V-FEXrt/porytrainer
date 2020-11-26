@@ -10,7 +10,6 @@
 #include <memory>
 #include <map>
 
-#include "trainer_entry.h"
 #include "trainer_value.h"
 #include "parser_util.h"
 

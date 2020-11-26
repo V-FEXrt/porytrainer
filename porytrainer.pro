@@ -24,9 +24,7 @@ HEADERS += \
     include/lib/define_statement.h \
     include/lib/lexer.h \
     include/lib/parser.h \
-    include/lib/pokemon_entry.h \
     include/lib/pokemon_value.h \
-    include/lib/trainer_entry.h \
     include/lib/trainer_util.h \
     include/lib/trainer_value.h \
     include/mainwindow.h \

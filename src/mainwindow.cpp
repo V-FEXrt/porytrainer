@@ -141,7 +141,7 @@ void MainWindow::initUI(QString root) {
 
     // Fill in trainers
     fex::TrainerUtil util(root_.toStdString() + "/src/data/trainers.h", root_.toStdString() + "/src/data/trainer_parties.h");
-    auto trainers = util.ReadTrainersV();
+    auto trainers = util.ReadTrainers();
 
     for (unsigned int i = 0; i < trainers.size(); i++)
     {
