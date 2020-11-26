@@ -51,7 +51,7 @@ namespace fex
         {
             if (values[i].type() != ArrayValue::Type::kValuePair)
             {
-                return false;
+                continue;
             }
 
             const auto& key = values[i].pair().first;

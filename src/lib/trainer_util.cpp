@@ -257,15 +257,25 @@ namespace fex
             }
 
             auto array_value = data->second.release_values();
-            for (auto &pokemon : array_value[0].release_values())
-            {
-                if (pokemon.type() == ArrayValue::Type::kEmpty)
-                {
-                    continue;
-                }
 
-                pair.second->AddPokemon(ParsePokemonV(pokemon));
+            // This is either a list of list of ValuePairs if the party was larger than 1
+            // or a list of ValuePairs if the party only had one pokemon
+            std::vector<ArrayValue> pokemon_values = array_value[0].release_values();
+            if (pokemon_values.front().type() == ArrayValue::Type::kValuePair) {
+                auto value_list = ArrayValue::ValueList(std::move(pokemon_values));
+                pair.second->AddPokemon(ParsePokemonV(value_list));
+            } else { // Add the entire team
+                for (auto &pokemon : pokemon_values)
+                {
+                    if (pokemon.type() == ArrayValue::Type::kEmpty)
+                    {
+                        continue;
+                    }
+
+                    pair.second->AddPokemon(ParsePokemonV(pokemon));
+                }
             }
+
             out.push_back(std::move(pair.second));
         }
 
