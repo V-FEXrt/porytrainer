@@ -22,7 +22,7 @@ namespace fex
             kEmpty,
         };
 
-        const Type type() const
+        Type type() const
         {
             return type_;
         }
@@ -30,6 +30,11 @@ namespace fex
         const std::vector<ArrayValue> &values() const
         {
             return values_;
+        }
+
+        std::vector<ArrayValue> release_values()
+        {
+            return std::move(values_);
         }
 
         const std::pair<std::string, std::unique_ptr<ArrayValue>> &pair() const

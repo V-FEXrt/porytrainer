@@ -143,10 +143,11 @@ void MainWindow::initUI(QString root) {
     fex::TrainerUtil util(root_.toStdString() + "/src/data/trainers.h", root_.toStdString() + "/src/data/trainer_parties.h");
     auto trainers = util.ReadTrainers();
 
-    for (const auto &trainer : trainers) {
-        QString identifier = QString::fromStdString(trainer.identifier());
+    for (unsigned int i = 0; i < trainers.size(); i++)
+    {
+        QString identifier = QString::fromStdString(trainers[i]->identifier());
         ui_->listWidget_trainers->addItem(identifier);
-        trainers_.insert(identifier, trainer);
+        trainers_.insert(std::pair<QString, std::unique_ptr<fex::TrainerValue>>(identifier, std::move(trainers[i])));
     }
 
     // Add Script AI checkboxes
@@ -240,9 +241,9 @@ void MainWindow::on_listWidget_trainers_itemSelectionChanged()
 
     clearUI();
 
-    const fex::TrainerEntry& trainer = it.value();
+    const std::unique_ptr<fex::TrainerValue>& trainer = it->second;
 
-    QString pic_filename = QString::fromStdString(trainer.trainer_pic()).toLower() + "_front_pic.png";
+    QString pic_filename = QString::fromStdString(trainer->trainer_pic()).toLower() + "_front_pic.png";
     pic_filename = pic_filename.mid(12); // 12 = len(TRAINER_PIC_)
     QString pic_path = root_ + "/graphics/trainers/front_pics/" + pic_filename;
     QPixmap pixmap = QPixmap(pic_path);
@@ -250,15 +251,15 @@ void MainWindow::on_listWidget_trainers_itemSelectionChanged()
     trainer_scene_->addPixmap(pixmap);
     ui_->graphicsView_trainerSprite->setScene(trainer_scene_.get());
 
-    ui_->comboBox_trainerClasses->setCurrentText(QString::fromStdString(trainer.trainer_class()));
-    ui_->lineEdit_trainerName->setText(QString::fromStdString(trainer.trainer_name()));
-    ui_->comboBox_trainerPics->setCurrentText(QString::fromStdString(trainer.trainer_pic()));
-    ui_->checkBox_doubleBattle->setChecked(trainer.double_battle());
+    ui_->comboBox_trainerClasses->setCurrentText(QString::fromStdString(trainer->trainer_class()));
+    ui_->lineEdit_trainerName->setText(QString::fromStdString(trainer->trainer_name()));
+    ui_->comboBox_trainerPics->setCurrentText(QString::fromStdString(trainer->trainer_pic()));
+    ui_->checkBox_doubleBattle->setChecked(trainer->double_battle());
 
     QString gender = "MALE";
     QString encounter_music = "";
 
-    for (const std::string& value : trainer.encounter_music_gender()) {
+    for (const std::string& value : trainer->encounter_music_gender()) {
         if (value == "F_TRAINER_FEMALE") {
             gender = "FEMALE";
         } else {
@@ -269,34 +270,34 @@ void MainWindow::on_listWidget_trainers_itemSelectionChanged()
     ui_->comboBox_gender->setCurrentText(gender);
     ui_->comboBox_encounterMusic->setCurrentText(encounter_music);
 
-    for(const std::string& value : trainer.items()) {
+    for(const std::string& value : trainer->items()) {
         ui_->listWidget_items->addItem(QString::fromStdString(value));
     }
 
     int ui_index = 0;
-    for (const fex::PokemonEntry& pokemon : trainer.party()) {
-        pokemon_ui_items_[ui_index].species->setCurrentText(QString::fromStdString(pokemon.species()));
-        pokemon_ui_items_[ui_index].item->setCurrentText(QString::fromStdString(pokemon.held_item()));
-        pokemon_ui_items_[ui_index].iv->setValue(pokemon.iv());
-        pokemon_ui_items_[ui_index].level->setValue(pokemon.level());
+    for (const std::unique_ptr<fex::PokemonValue>& pokemon : trainer->party()) {
+        pokemon_ui_items_[ui_index].species->setCurrentText(QString::fromStdString(pokemon->species()));
+        pokemon_ui_items_[ui_index].item->setCurrentText(QString::fromStdString(pokemon->held_item()));
+        pokemon_ui_items_[ui_index].iv->setValue(pokemon->iv());
+        pokemon_ui_items_[ui_index].level->setValue(pokemon->level());
 
-        QString species_name = QString::fromStdString(pokemon.species()).toLower().mid(8); // 8 = len(SPECIES_)
+        QString species_name = QString::fromStdString(pokemon->species()).toLower().mid(8); // 8 = len(SPECIES_)
         QString sprite_path = root_ + "/graphics/pokemon/" + species_name + "/front.png";
         QPixmap sprite = QPixmap(sprite_path);
         sprite = sprite.scaled(sprite.width()*0.9, sprite.height()*0.9, Qt::KeepAspectRatio);
         pokemon_ui_items_[ui_index].scene->addPixmap(sprite);
         pokemon_ui_items_[ui_index].sprite->setScene(pokemon_ui_items_[ui_index].scene.get());
 
-        if (pokemon.moves().size() > 0) {
-            pokemon_ui_items_[ui_index].move_1->setCurrentText(QString::fromStdString(pokemon.moves()[0]));
-            pokemon_ui_items_[ui_index].move_2->setCurrentText(QString::fromStdString(pokemon.moves()[1]));
-            pokemon_ui_items_[ui_index].move_3->setCurrentText(QString::fromStdString(pokemon.moves()[2]));
-            pokemon_ui_items_[ui_index].move_4->setCurrentText(QString::fromStdString(pokemon.moves()[3]));
+        if (pokemon->moves().size() > 0) {
+            pokemon_ui_items_[ui_index].move_1->setCurrentText(QString::fromStdString(pokemon->moves()[0]));
+            pokemon_ui_items_[ui_index].move_2->setCurrentText(QString::fromStdString(pokemon->moves()[1]));
+            pokemon_ui_items_[ui_index].move_3->setCurrentText(QString::fromStdString(pokemon->moves()[2]));
+            pokemon_ui_items_[ui_index].move_4->setCurrentText(QString::fromStdString(pokemon->moves()[3]));
         }
         ui_index++;
     }
 
-    for (const std::string& ai_flag : trainer.ai_flags())
+    for (const std::string& ai_flag : trainer->ai_flags())
     {
         ai_script_check_boxes_[QString::fromStdString(ai_flag)]->setChecked(true);
     }

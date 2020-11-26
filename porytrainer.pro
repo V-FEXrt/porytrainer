@@ -12,7 +12,9 @@ SOURCES += \
     main.cpp \
     src/lib/lexer.cpp \
     src/lib/parser.cpp \
+    src/lib/pokemon_value.cpp \
     src/lib/trainer_util.cpp \
+    src/lib/trainer_value.cpp \
     src/mainwindow.cpp \
     src/parser_util.cpp
 
@@ -22,9 +24,9 @@ HEADERS += \
     include/lib/define_statement.h \
     include/lib/lexer.h \
     include/lib/parser.h \
-    include/lib/pokemon_entry.h \
-    include/lib/trainer_entry.h \
+    include/lib/pokemon_value.h \
     include/lib/trainer_util.h \
+    include/lib/trainer_value.h \
     include/mainwindow.h \
     include/parser_util.h
 

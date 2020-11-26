@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "trainer_entry.h"
+#include "trainer_value.h"
 
 namespace fex
 {
@@ -11,7 +11,7 @@ namespace fex
     {
     public:
         TrainerUtil(std::string trainer_data_path, std::string party_data_path);
-        std::vector<TrainerEntry> ReadTrainers(); 
+        std::vector<std::unique_ptr<TrainerValue>> ReadTrainers();
 
     private:
         std::string trainer_data_path_;

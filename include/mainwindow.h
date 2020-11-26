@@ -8,8 +8,9 @@
 #include <QGraphicsView>
 
 #include <memory>
+#include <map>
 
-#include "trainer_entry.h"
+#include "trainer_value.h"
 #include "parser_util.h"
 
 struct PokemonUIItem {
@@ -54,7 +55,7 @@ private:
 
     std::unique_ptr<ParserUtil> parser_util_;
 
-    QMap<QString, fex::TrainerEntry> trainers_;
+    std::map<QString, std::unique_ptr<fex::TrainerValue>> trainers_;
     std::vector<PokemonUIItem> pokemon_ui_items_;
     std::unique_ptr<QGraphicsScene> trainer_scene_;
     std::map<QString, std::unique_ptr<QCheckBox>> ai_script_check_boxes_;
