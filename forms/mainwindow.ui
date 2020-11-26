@@ -44,7 +44,7 @@
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>81</width>
+       <width>91</width>
        <height>16</height>
       </rect>
      </property>
@@ -57,7 +57,7 @@
       <rect>
        <x>10</x>
        <y>60</y>
-       <width>81</width>
+       <width>91</width>
        <height>16</height>
       </rect>
      </property>
@@ -68,9 +68,9 @@
     <widget class="QLineEdit" name="lineEdit_trainerName">
      <property name="geometry">
       <rect>
-       <x>100</x>
+       <x>104</x>
        <y>60</y>
-       <width>281</width>
+       <width>271</width>
        <height>21</height>
       </rect>
      </property>
@@ -93,7 +93,7 @@
       <rect>
        <x>10</x>
        <y>90</y>
-       <width>71</width>
+       <width>81</width>
        <height>16</height>
       </rect>
      </property>
@@ -119,7 +119,7 @@
       <rect>
        <x>10</x>
        <y>180</y>
-       <width>81</width>
+       <width>151</width>
        <height>16</height>
       </rect>
      </property>
@@ -130,7 +130,7 @@
     <widget class="QCheckBox" name="checkBox_doubleBattle">
      <property name="geometry">
       <rect>
-       <x>370</x>
+       <x>360</x>
        <y>180</y>
        <width>21</width>
        <height>20</height>
