@@ -287,3 +287,15 @@ void MainWindow::on_actionOpen_Project_triggered()
                                                     QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     initUI(dir);
 }
+
+void MainWindow::on_lineEdit_searchTrainers_textChanged(const QString &arg1)
+{
+    ui_->listWidget_trainers->clear();
+    for (const auto& pair: trainers_)
+    {
+        if (pair.first.contains(arg1.toUpper()) || arg1 == "")
+        {
+            ui_->listWidget_trainers->addItem(pair.first);
+        }
+    }
+}

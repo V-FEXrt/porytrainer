@@ -45,6 +45,8 @@ private slots:
 
     void on_actionOpen_Project_triggered();
 
+    void on_lineEdit_searchTrainers_textChanged(const QString &arg1);
+
 private:
     void initUI(QString root);
     void clearUI();
