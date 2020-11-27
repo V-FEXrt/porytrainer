@@ -9,6 +9,7 @@ CONFIG += c++14 -Wall
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    flowlayout.cpp \
     main.cpp \
     src/lib/lexer.cpp \
     src/lib/parser.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
     src/parser_util.cpp
 
 HEADERS += \
+    include/flowlayout.h \
     include/lib/array.h \
     include/lib/array_value.h \
     include/lib/define_statement.h \

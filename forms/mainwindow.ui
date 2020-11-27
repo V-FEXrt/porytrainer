@@ -1452,20 +1452,15 @@
     <property name="title">
      <string>AI Script Options</string>
     </property>
-    <widget class="QWidget" name="gridLayoutWidget">
+    <widget class="FlowLayout" name="flowLayout_aiScriptOptions" native="true">
      <property name="geometry">
       <rect>
-       <x>9</x>
-       <y>23</y>
+       <x>10</x>
+       <y>10</y>
        <width>561</width>
-       <height>91</height>
+       <height>101</height>
       </rect>
      </property>
-     <layout class="QGridLayout" name="gridLayout_aiScriptOptions">
-      <property name="spacing">
-       <number>1</number>
-      </property>
-     </layout>
     </widget>
    </widget>
    <widget class="QGraphicsView" name="graphicsView_trainerSprite">
@@ -1505,6 +1500,14 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FlowLayout</class>
+   <extends>QWidget</extends>
+   <header>flowlayout.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

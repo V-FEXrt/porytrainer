@@ -120,7 +120,7 @@ void MainWindow::initUI(QString root) {
 
     for (const auto& pair : ai_script_check_boxes_)
     {
-        ui_->gridLayout_aiScriptOptions->removeWidget(pair.second.get());
+        ui_->flowLayout_aiScriptOptions->removeWidget(pair.second.get());
     }
     ai_script_check_boxes_.clear();
 
@@ -153,40 +153,17 @@ void MainWindow::initUI(QString root) {
     // Add Script AI checkboxes
     QStringList scripts = parser_util_->ReadDefines("include/constants/battle_ai.h", "AI_SCRIPT_");
 
-    int width = 4;
-    int height = 4;
-
-    if (scripts.size() > width * height)
+    for (int i = 0; i < scripts.size(); i++)
     {
-        // todo WARN # of scripts size too large
-    }
+        QString script = scripts[i];
 
-    for (int i = 0; i < width; i++)
-    {
-        for (int j = 0; j < height; j++)
-        {
-            int index = i * height + j;
-            if (index >= scripts.size())
-            {
-                break;
-            }
+        std::unique_ptr<QCheckBox> box = std::make_unique<QCheckBox>();
 
-            QString script = scripts[index];
+        box->setToolTip(script);
+        box->setText(script.mid(10)); // 10 = len(AI_SCRIPT_)
 
-            std::unique_ptr<QCheckBox> box = std::make_unique<QCheckBox>();
-
-            box->setToolTip(script);
-            QString trunc = script.mid(10); // 10 = len(AI_SCRIPT_)
-            if (trunc.length() > 12) {
-                trunc.chop(trunc.length() - 9);
-                trunc += "...";
-            }
-            box->setText(trunc);
-
-            ui_->gridLayout_aiScriptOptions->addWidget(box.get(), i, j);
-
-            ai_script_check_boxes_[script] = std::move(box);
-        }
+        ui_->flowLayout_aiScriptOptions->addWidget(box.get());
+        ai_script_check_boxes_[script] = std::move(box);
     }
 
     clearUI();
