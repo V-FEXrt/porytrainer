@@ -190,4 +190,16 @@ namespace fex
 
         return it->second.pair().second->pair().second->string_value();
     }
+
+    void TrainerValue::SetTrainerPic(const std::string& pic)
+    {
+        auto it = values_.find("trainerPic");
+        if (it == values_.end())
+        {
+            // TODO: add value
+            std::cout << "[WARNING] Attempted to set trainer name, but value missing" << std::endl;
+        }
+
+        it->second.pair().second->set_string_value(pic);
+    }
 } // namespace fex

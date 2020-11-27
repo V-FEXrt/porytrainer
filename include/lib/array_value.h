@@ -52,6 +52,11 @@ namespace fex
             return int_value_;
         }
 
+        void set_string_value(const std::string& value)
+        {
+            string_value_ = value;
+        }
+
         std::string ToString() const
         {
             switch (type_)

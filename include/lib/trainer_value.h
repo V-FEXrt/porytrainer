@@ -24,6 +24,8 @@ namespace fex
         std::string party_variable_type() const;
         std::string party_variable_value() const;
 
+        void SetTrainerPic(const std::string& pic);
+
         const std::string& identifier() const
         {
             return identifier_;

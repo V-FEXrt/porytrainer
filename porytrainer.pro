@@ -11,6 +11,7 @@ CONFIG += c++14 -Wall
 SOURCES += \
     flowlayout.cpp \
     main.cpp \
+    src/lib/emitter.cpp \
     src/lib/lexer.cpp \
     src/lib/parser.cpp \
     src/lib/pokemon_value.cpp \
@@ -24,6 +25,7 @@ HEADERS += \
     include/lib/array.h \
     include/lib/array_value.h \
     include/lib/define_statement.h \
+    include/lib/emitter.h \
     include/lib/lexer.h \
     include/lib/parser.h \
     include/lib/pokemon_value.h \

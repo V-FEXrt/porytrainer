@@ -1501,6 +1501,7 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen_Project"/>
+    <addaction name="actionSave"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -1510,6 +1511,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>

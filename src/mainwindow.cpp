@@ -2,8 +2,10 @@
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>
+#include <iostream>
 
 #include "trainer_util.h"
+#include "emitter.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -124,6 +126,8 @@ void MainWindow::initUI(QString root) {
     }
     ai_script_check_boxes_.clear();
 
+    trainers_.clear();
+
     ui_->comboBox_trainerClasses->addItems(parser_util_->ReadDefines("include/constants/trainer_classes.h", "CLASS_"));
     ui_->comboBox_trainerPics->addItems(parser_util_->ReadDefines("include/constants/trainers.h", "TRAINER_PIC_"));
     ui_->comboBox_encounterMusic->addItems(parser_util_->ReadDefines("include/constants/trainers.h", "TRAINER_ENCOUNTER_MUSIC_"));
@@ -201,12 +205,18 @@ void MainWindow::clearUI()
 
 void MainWindow::on_comboBox_trainerClasses_activated(const QString &trainerClass)
 {
-//    /*logError*/(trainerClass);
+    std::cout << trainerClass.toStdString() << std::endl;
 }
 
-void MainWindow::on_comboBox_trainerPics_activated(const QString &trainerPics)
+void MainWindow::on_comboBox_trainerPics_activated(const QString &trainerPic)
 {
-//    /*logError*/(trainerPics);
+    auto it = trainers_.find(ui_->listWidget_trainers->currentItem()->text());
+    if (it == trainers_.end()) {
+        return;
+    }
+
+    it->second->SetTrainerPic(trainerPic.toStdString());
+    on_listWidget_trainers_itemSelectionChanged();
 }
 
 void MainWindow::on_listWidget_trainers_itemSelectionChanged()
@@ -298,4 +308,10 @@ void MainWindow::on_lineEdit_searchTrainers_textChanged(const QString &arg1)
             ui_->listWidget_trainers->addItem(pair.first);
         }
     }
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+    fex::Emitter emitter(root_.toStdString(), "src/data/trainers.h", "src/data/trainer_parties.h");
+    emitter.EmitTrainers(trainers_);
 }

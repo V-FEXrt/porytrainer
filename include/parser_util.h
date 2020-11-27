@@ -9,6 +9,7 @@ class ParserUtil
 public:
     ParserUtil(QString root);
     QStringList ReadDefines(QString filename, QString prefix);
+    QStringList ReadDefinesValueSort(QString filename, QString prefix);
 
 private:
     QString root_;
