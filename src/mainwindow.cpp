@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>
+#include <QInputDialog>
 #include <iostream>
 
 #include "trainer_util.h"
@@ -92,6 +93,14 @@ MainWindow::MainWindow(QWidget *parent) :
         .sprite = ui_->graphicsView_species_6,
         .scene = std::make_unique<QGraphicsScene>(),
     });
+
+    for (const auto& pokemon_ui_item : pokemon_ui_items_)
+    {
+        connect(pokemon_ui_item.species, &QComboBox::textActivated, this, &MainWindow::on_pokemonSpecies_activated);
+        connect(pokemon_ui_item.item, &QComboBox::textActivated, this, &MainWindow::on_pokemonHeldItem_activated);
+        connect(pokemon_ui_item.level, &QSpinBox::textChanged, this, &MainWindow::on_pokemonLevel_textChanged);
+        connect(pokemon_ui_item.iv, &QSpinBox::textChanged, this, &MainWindow::on_pokemonIv_textChanged);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -128,7 +137,10 @@ void MainWindow::initUI(QString root) {
 
     trainers_.clear();
 
-    ui_->comboBox_trainerClasses->addItems(parser_util_->ReadDefines("include/constants/trainer_classes.h", "CLASS_"));
+    auto classes = parser_util_->ReadDefines("include/constants/trainer_classes.h", "CLASS_");
+    classes += parser_util_->ReadDefines("include/constants/trainer_classes.h", "TRAINER_CLASS_");
+
+    ui_->comboBox_trainerClasses->addItems(classes);
     ui_->comboBox_trainerPics->addItems(parser_util_->ReadDefines("include/constants/trainers.h", "TRAINER_PIC_"));
     ui_->comboBox_encounterMusic->addItems(parser_util_->ReadDefines("include/constants/trainers.h", "TRAINER_ENCOUNTER_MUSIC_"));
     ui_->comboBox_gender->addItems({"MALE", "FEMALE"});
@@ -165,6 +177,8 @@ void MainWindow::initUI(QString root) {
 
         box->setToolTip(script);
         box->setText(script.mid(10)); // 10 = len(AI_SCRIPT_)
+
+        connect(box.get(), &QCheckBox::clicked, this, &MainWindow::on_aiCheckBoxes_clicked);
 
         ui_->flowLayout_aiScriptOptions->addWidget(box.get());
         ai_script_check_boxes_[script] = std::move(box);
@@ -205,7 +219,12 @@ void MainWindow::clearUI()
 
 void MainWindow::on_comboBox_trainerClasses_activated(const QString &trainerClass)
 {
-    std::cout << trainerClass.toStdString() << std::endl;
+    auto it = trainers_.find(ui_->listWidget_trainers->currentItem()->text());
+    if (it == trainers_.end()) {
+        return;
+    }
+
+    it->second->SetTrainerClass(trainerClass.toStdString());
 }
 
 void MainWindow::on_comboBox_trainerPics_activated(const QString &trainerPic)
@@ -314,4 +333,162 @@ void MainWindow::on_actionSave_triggered()
 {
     fex::Emitter emitter(root_.toStdString(), "src/data/trainers.h", "src/data/trainer_parties.h");
     emitter.EmitTrainers(trainers_);
+}
+
+void MainWindow::on_lineEdit_trainerName_textEdited(const QString &trainerName)
+{
+    auto it = trainers_.find(ui_->listWidget_trainers->currentItem()->text());
+    if (it == trainers_.end()) {
+        return;
+    }
+
+    it->second->SetTrainerName(trainerName.toStdString());
+}
+
+void MainWindow::on_checkBox_doubleBattle_clicked(bool checked)
+{
+    auto it = trainers_.find(ui_->listWidget_trainers->currentItem()->text());
+    if (it == trainers_.end()) {
+        return;
+    }
+
+    it->second->SetDoubleBattle(checked);
+}
+
+void MainWindow::on_comboBox_encounterMusic_activated(const QString &encounterMusic)
+{
+    auto it = trainers_.find(ui_->listWidget_trainers->currentItem()->text());
+    if (it == trainers_.end()) {
+        return;
+    }
+
+    bool is_female = ui_->comboBox_gender->currentText() == "FEMALE";
+
+    it->second->SetEncounterMusicGender(encounterMusic.toStdString(), is_female);
+}
+
+void MainWindow::on_comboBox_gender_activated(const QString &gender)
+{
+    auto it = trainers_.find(ui_->listWidget_trainers->currentItem()->text());
+    if (it == trainers_.end()) {
+        return;
+    }
+
+    bool is_female = gender == "FEMALE";
+    std::string music = ui_->comboBox_encounterMusic->currentText().toStdString();
+
+    it->second->SetEncounterMusicGender(music, is_female);
+}
+
+void MainWindow::on_pushButton_addItem_clicked()
+{
+    auto it = trainers_.find(ui_->listWidget_trainers->currentItem()->text());
+    if (it == trainers_.end()) {
+        return;
+    }
+
+    bool ok;
+    QString text = QInputDialog::getItem(this, tr("Add Item"), tr("Item to add"),
+                                        parser_util_->ReadDefines("include/constants/items.h", "ITEM_"),
+                                        0, true, &ok);
+
+    if (!ok || text.isEmpty())
+    {
+        return;
+    }
+
+    it->second->AddItem(text.toStdString());
+    ui_->listWidget_items->addItem(text);
+}
+
+void MainWindow::on_pushButton_removeItem_clicked()
+{
+    auto it = trainers_.find(ui_->listWidget_trainers->currentItem()->text());
+    if (it == trainers_.end()) {
+        return;
+    }
+
+    it->second->RemoveItem(ui_->listWidget_items->currentItem()->text().toStdString());
+    delete ui_->listWidget_items->takeItem(ui_->listWidget_items->currentRow());
+}
+
+void MainWindow::on_aiCheckBoxes_clicked()
+{
+    auto it = trainers_.find(ui_->listWidget_trainers->currentItem()->text());
+    if (it == trainers_.end()) {
+        return;
+    }
+
+    std::vector<std::string> scripts;
+    for (const auto& pair : ai_script_check_boxes_)
+    {
+        if (pair.second->isChecked())
+        {
+            scripts.push_back(pair.first.toStdString());
+        }
+    }
+
+    it->second->SetAIScripts(std::move(scripts));
+}
+
+void MainWindow::on_pokemonSpecies_activated(const QString &/*arg1*/)
+{
+    auto it = trainers_.find(ui_->listWidget_trainers->currentItem()->text());
+    if (it == trainers_.end()) {
+        return;
+    }
+
+    auto& pokemon =  it->second->mutable_party();
+    unsigned int size = pokemon.size();
+    for(unsigned int i = 0; i < size; i++)
+    {
+        pokemon[i]->SetSpecies(pokemon_ui_items_[i].species->currentText().toStdString());
+    }
+
+    on_listWidget_trainers_itemSelectionChanged();
+}
+
+void MainWindow::on_pokemonHeldItem_activated(const QString &/*arg1*/)
+{
+    auto it = trainers_.find(ui_->listWidget_trainers->currentItem()->text());
+    if (it == trainers_.end()) {
+        return;
+    }
+
+    auto& pokemon =  it->second->mutable_party();
+    unsigned int size = pokemon.size();
+    for(unsigned int i = 0; i < size; i++)
+    {
+        pokemon[i]->SetHeldItem(pokemon_ui_items_[i].item->currentText().toStdString());
+    }
+}
+
+void MainWindow::on_pokemonLevel_textChanged(const QString & /*value*/)
+{
+    auto it = trainers_.find(ui_->listWidget_trainers->currentItem()->text());
+    if (it == trainers_.end()) {
+        return;
+    }
+
+    auto& pokemon =  it->second->mutable_party();
+    unsigned int size = pokemon.size();
+    for(unsigned int i = 0; i < size; i++)
+    {
+        pokemon[i]->SetLevel(pokemon_ui_items_[i].level->value());
+    }
+}
+
+void MainWindow::on_pokemonIv_textChanged(const QString & /*value*/)
+{
+    auto it = trainers_.find(ui_->listWidget_trainers->currentItem()->text());
+    if (it == trainers_.end()) {
+        return;
+    }
+
+    auto& pokemon =  it->second->mutable_party();
+    unsigned int size = pokemon.size();
+    for(unsigned int i = 0; i < size; i++)
+    {
+        pokemon[i]->SetIv(pokemon_ui_items_[i].iv->value());
+    }
 }

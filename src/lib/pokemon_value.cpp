@@ -122,4 +122,58 @@ namespace fex
 
         return ParseBitOrFlags(it->second);
     }
+
+    void PokemonValue::SetSpecies(const std::string &value)
+    {
+        auto it = values_.find("species");
+        if (it == values_.end())
+        {
+            // TODO: add value
+            std::cout << "[WARNING] Attempted to set species, but value missing" << std::endl;
+            return;
+        }
+
+        it->second.pair().second->set_string_value(value);
+    }
+
+    void PokemonValue::SetLevel(int value)
+    {
+        auto it = values_.find("lvl");
+        if (it == values_.end())
+        {
+            // TODO: add value
+            std::cout << "[WARNING] Attempted to set level, but value missing" << std::endl;
+            return;
+        }
+
+        it->second.pair().second->set_int_value(value);
+    }
+
+    void PokemonValue::SetIv(int value)
+    {
+        auto it = values_.find("iv");
+        if (it == values_.end())
+        {
+            // TODO: add value
+            std::cout << "[WARNING] Attempted to set iv, but value missing" << std::endl;
+            return;
+        }
+
+        it->second.pair().second->set_int_value(value);
+    }
+
+    void PokemonValue::SetHeldItem(const std::string& value)
+    {
+        auto it = values_.find("heldItem");
+        if (it == values_.end())
+        {
+            std::unique_ptr<ArrayValue> v = std::unique_ptr<ArrayValue>(new ArrayValue(ArrayValue::Type::kIdentifier, value));
+            ArrayValue pair = ArrayValue::ValuePair(std::pair<std::string, std::unique_ptr<ArrayValue>>("heldItem", std::move(v)));
+
+            values_.insert(std::pair<std::string, ArrayValue>("heldItem", std::move(pair)));
+            return;
+        }
+
+        it->second.pair().second->set_string_value(value);
+    }
 } // namespace fex

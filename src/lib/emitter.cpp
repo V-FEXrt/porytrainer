@@ -67,7 +67,7 @@ std::string ValueListFromVector(const std::vector<std::string>& items)
         trainer_file << "const struct Trainer gTrainers[] = {\n";
 
         for (auto key : trainer_list)
-        {
+        {      
             auto it = trainers.find(key);
             if (it == trainers.end())
             {
@@ -76,6 +76,33 @@ std::string ValueListFromVector(const std::vector<std::string>& items)
                 continue;
             }
             const auto& trainer = it->second;
+
+            std::string party_var_type = "";
+
+            // Determine Party Var type
+            bool has_items = false;
+            bool has_moves = false;
+            for (const auto& pokemon : trainer->party())
+            {
+                if (pokemon->held_item() != "")
+                {
+                    has_items = true;
+                }
+                if (pokemon->moves().size() > 0)
+                {
+                    has_moves = true;
+                }
+            }
+
+            if (has_items && has_moves) {
+                party_var_type = "ItemCustomMoves";
+            } else if (has_items) {
+                party_var_type = "ItemDefaultMoves";
+            } else if (has_moves) {
+                party_var_type = "NoItemCustomMoves";
+            } else {
+                party_var_type = "NoItemDefaultMoves";
+            }
 
             trainer_file << "\t" << "[" << key.toStdString() << "] = {\n";
             trainer_file << "\t\t" << "." << "partyFlags" << " = " << BitOrFromVector(trainer->party_flags()) << ",\n";
@@ -87,23 +114,16 @@ std::string ValueListFromVector(const std::vector<std::string>& items)
             trainer_file << "\t\t" << "." << "doubleBattle" << " = " << ((trainer->double_battle()) ? "TRUE" : "FALSE") << ",\n";
             trainer_file << "\t\t" << "." << "aiFlags" << " = " << BitOrFromVector(trainer->ai_flags()) << ",\n";
 
-            const auto& party_var_type = trainer->party_variable_type();
             const auto& party_var_value = trainer->party_variable_value();
             if (party_var_value == "" || party_var_value == "NULL")
             {
                 trainer_file << "\t\t" << "." << "partySize" << " = " << 0 << ",\n";
+                trainer_file << "\t\t" << "." << "party" << " = " << "NULL" << ",\n";
             }
             else
             {
                 trainer_file << "\t\t" << "." << "partySize" << " = " << "ARRAY_COUNT(" << trainer->party_variable_value() << ")" << ",\n";
-            }
-
-            if (party_var_type == "")
-            {
-                trainer_file << "\t\t" << "." << "party" << " = " << "NULL" << ",\n";
-            } else
-            {
-                trainer_file << "\t\t" << "." << "party" << " = " << "{ " << "." << trainer->party_variable_type() << " = " << trainer->party_variable_value() << " }" << ",\n";
+                trainer_file << "\t\t" << "." << "party" << " = " << "{ " << "." << party_var_type << " = " << trainer->party_variable_value() << " }" << ",\n";
             }
 
             trainer_file << "\t" << "},\n";

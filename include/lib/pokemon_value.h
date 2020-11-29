@@ -20,6 +20,11 @@ namespace fex
         std::string held_item() const;
         std::vector<std::string> moves() const;
 
+        void SetSpecies(const std::string& value);
+        void SetHeldItem(const std::string& value);
+        void SetLevel(int value);
+        void SetIv(int value);
+
     private:
         PokemonValue(std::map<std::string, ArrayValue> values): values_(std::move(values))  {}
         std::map<std::string, ArrayValue> values_;

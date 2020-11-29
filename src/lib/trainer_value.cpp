@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 #include "pokemon_value.h"
 
@@ -100,7 +101,7 @@ namespace fex
         auto it = values_.find("trainerPic");
         if (it == values_.end())
         {
-            std::cout << "[WARNING] Requested trainer name, but value missing" << std::endl;
+            std::cout << "[WARNING] Requested trainer pic, but value missing" << std::endl;
             return "";
         }
 
@@ -191,15 +192,136 @@ namespace fex
         return it->second.pair().second->pair().second->string_value();
     }
 
-    void TrainerValue::SetTrainerPic(const std::string& pic)
+    void TrainerValue::SetTrainerPic(const std::string& value)
     {
         auto it = values_.find("trainerPic");
         if (it == values_.end())
         {
             // TODO: add value
-            std::cout << "[WARNING] Attempted to set trainer name, but value missing" << std::endl;
+            std::cout << "[WARNING] Attempted to set trainer pic, but value missing" << std::endl;
+            return;
         }
 
-        it->second.pair().second->set_string_value(pic);
+        it->second.pair().second->set_string_value(value);
     }
+
+    void TrainerValue::SetTrainerClass(const std::string& value)
+    {
+        auto it = values_.find("trainerClass");
+        if (it == values_.end())
+        {
+            // TODO: add value
+            std::cout << "[WARNING] Attempted to set trainer class, but value missing" << std::endl;
+            return;
+        }
+
+        it->second.pair().second->set_string_value(value);
+    }
+
+    void TrainerValue::SetTrainerName(const std::string& value)
+    {
+        auto it = values_.find("trainerName");
+        if (it == values_.end())
+        {
+            // TODO: add value
+            std::cout << "[WARNING] Attempted to set trainer name, but value missing" << std::endl;
+            return;
+        }
+
+        it->second.pair().second->set_string_value(value);
+    }
+
+    void TrainerValue::SetDoubleBattle(bool value)
+    {
+        auto it = values_.find("doubleBattle");
+        if (it == values_.end())
+        {
+            // TODO: add value
+            std::cout << "[WARNING] Attempted to set double battle, but value missing" << std::endl;
+            return;
+        }
+
+        it->second.pair().second->set_string_value((value) ? "TRUE" : "FALSE");
+    }
+
+    void TrainerValue::SetEncounterMusicGender(const std::string& value, bool is_female)
+    {
+        auto it = values_.find("encounterMusic_gender");
+        if (it == values_.end())
+        {
+            // TODO: add value
+            std::cout << "[WARNING] Attempted to set encounter music/gender, but value missing" << std::endl;
+            return;
+        }
+
+        std::vector<ArrayValue> value_list = {};
+        value_list.push_back(ArrayValue::Identifier(value));
+        if (is_female)
+        {
+            value_list.push_back(ArrayValue::Identifier("F_TRAINER_FEMALE"));
+        }
+
+        it->second.pair().second->set_type(ArrayValue::Type::kValueList);
+        it->second.pair().second->set_values(std::move(value_list));
+    }
+
+    void TrainerValue::SetAIScripts(std::vector<std::string> values)
+    {
+        auto it = values_.find("aiFlags");
+        if (it == values_.end())
+        {
+            // TODO: add value
+            std::cout << "[WARNING] Attempted to set ai scripts, but value missing" << std::endl;
+            return;
+        }
+
+        std::vector<ArrayValue> value_list = {};
+        for(const auto& value: values)
+        {
+            value_list.push_back(ArrayValue::Identifier(value));
+        }
+
+        it->second.pair().second->set_type(ArrayValue::Type::kValueList);
+        it->second.pair().second->set_values(std::move(value_list));
+    }
+
+    void TrainerValue::RemoveItem(const std::string &value)
+    {
+        auto it = values_.find("items");
+        if (it == values_.end())
+        {
+            std::cout << "[WARNING] Attempted to remove item, but value missing" << std::endl;
+            return;
+        }
+
+        std::vector<ArrayValue> values = it->second.pair().second->release_values();
+        int index = 0;
+        for (const auto& v : values)
+        {
+            if (v.type() == ArrayValue::Type::kIdentifier && v.string_value() == value)
+            {
+                break;
+            }
+            index++;
+        }
+        values.erase(values.begin() + index);
+        it->second.pair().second->set_values(std::move(values));
+    }
+
+    void TrainerValue::AddItem(const std::string &value)
+    {
+        auto it = values_.find("items");
+        if (it == values_.end())
+        {
+            std::cout << "[WARNING] Attempted to remove item, but value missing" << std::endl;
+            return;
+        }
+
+        std::vector<ArrayValue> values = it->second.pair().second->release_values();
+        values.push_back(ArrayValue::Identifier(value));
+
+        it->second.pair().second->set_type(ArrayValue::Type::kValueList);
+        it->second.pair().second->set_values(std::move(values));
+    }
+
 } // namespace fex
