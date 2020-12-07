@@ -47,6 +47,28 @@ private slots:
 
     void on_lineEdit_searchTrainers_textChanged(const QString &arg1);
 
+    void on_actionSave_triggered();
+
+    void on_lineEdit_trainerName_textEdited(const QString &arg1);
+
+    void on_checkBox_doubleBattle_clicked(bool checked);
+
+    void on_comboBox_encounterMusic_activated(const QString &arg1);
+
+    void on_comboBox_gender_activated(const QString &arg1);
+
+    void on_pushButton_addItem_clicked();
+
+    void on_pushButton_removeItem_clicked();
+
+    void on_aiCheckBoxes_clicked();
+
+    void on_pokemonSpecies_activated(const QString &arg1);
+    void on_pokemonHeldItem_activated(const QString &arg1);
+    void on_pokemonLevel_textChanged(const QString &value);
+    void on_pokemonIv_textChanged(const QString &value);
+    void on_pokemonMoves_activated(const QString &arg1);
+
 private:
     void initUI(QString root);
     void clearUI();

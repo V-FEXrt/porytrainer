@@ -52,21 +52,41 @@ namespace fex
             return int_value_;
         }
 
-        std::string ToString() const
+        void set_type(const Type& type)
         {
+            type_ = type;
+        }
+
+        void set_string_value(const std::string& value)
+        {
+            string_value_ = value;
+        }
+
+        void set_int_value(int value)
+        {
+            int_value_ = value;
+        }
+
+        void set_values(std::vector<ArrayValue> values)
+        {
+            values_ = std::move(values);
+        }
+
+        std::string ToString() const
+        {   
             switch (type_)
             {
             case Type::kEmpty:
-                return "{}";
+                return "kEmpty: {}";
             case Type::kNumber:
-                return std::to_string(int_value_);
+                return "kNumber: " + std::to_string(int_value_);
             case Type::kString:
-                return "\"" + string_value_ + "\"";
+                return "kString: \"" + string_value_ + "\"";
             case Type::kIdentifier:
-                return string_value_;
+                return "kIdentifier: " + string_value_;
             case Type::kValueList:
             {
-                std::string out = "{\n";
+                std::string out = "kValueList: {\n";
                 for (const ArrayValue &v : values_)
                 {
                     out += "\t" + v.ToString() + ",\n";
@@ -74,7 +94,7 @@ namespace fex
                 return out + "}\n";
             }
             case Type::kValuePair:
-                return pair_.first + " = " + pair_.second->ToString() + "\n";
+                return "kValuePair: " + pair_.first + " = " + pair_.second->ToString() + "\n";
             }
         }
 
@@ -107,7 +127,6 @@ namespace fex
             return ArrayValue(ArrayValue::Type::kValuePair, std::move(value));
         }
 
-    protected:
         ArrayValue(Type type) : type_(type) {}
         ArrayValue(Type type, int value) : type_(type), int_value_(value) {}
         ArrayValue(Type type, std::string value) : type_(type), string_value_(value) {}

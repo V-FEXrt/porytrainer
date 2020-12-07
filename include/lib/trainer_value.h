@@ -24,12 +24,27 @@ namespace fex
         std::string party_variable_type() const;
         std::string party_variable_value() const;
 
+        void SetTrainerClass(const std::string& value);
+        void SetTrainerPic(const std::string& value);
+        void SetTrainerName(const std::string& value);
+        void SetEncounterMusicGender(const std::string& value, bool is_female);
+        void SetDoubleBattle(bool value);
+        void SetAIScripts(std::vector<std::string> values);
+
+        void AddItem(const std::string& value);
+        void RemoveItem(const std::string& value);
+
         const std::string& identifier() const
         {
             return identifier_;
         }
 
         const std::vector<std::unique_ptr<PokemonValue>>& party() const
+        {
+            return party_;
+        }
+
+        std::vector<std::unique_ptr<PokemonValue>>& mutable_party()
         {
             return party_;
         }

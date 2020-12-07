@@ -91,6 +91,7 @@ namespace fex
             if (data == name_value_map.end() || data->second.values().size() == 0)
             {
                 std::cout << "[WARNING] " << pair.first << " requires " << pair.second->party_variable_value() << " but it is not defined." << std::endl;
+                out.push_back(std::move(pair.second));
                 continue;
             }
 
