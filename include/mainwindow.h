@@ -67,6 +67,7 @@ private slots:
     void on_pokemonHeldItem_activated(const QString &arg1);
     void on_pokemonLevel_textChanged(const QString &value);
     void on_pokemonIv_textChanged(const QString &value);
+    void on_pokemonMoves_activated(const QString &arg1);
 
 private:
     void initUI(QString root);

@@ -155,6 +155,7 @@ std::string ValueListFromVector(const std::vector<std::string>& items)
 
                     if (party_var_type == "NoItemCustomMoves")
                     {
+                        // This isn't working for some reason
                         std::vector<std::string> moves = {"MOVE_NONE", "MOVE_NONE", "MOVE_NONE", "MOVE_NONE"};
                         for (unsigned int i = 0; i < pokemon->moves().size(); i++)
                         {

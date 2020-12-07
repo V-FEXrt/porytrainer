@@ -176,4 +176,26 @@ namespace fex
 
         it->second.pair().second->set_string_value(value);
     }
+
+    void PokemonValue::SetMoves(std::vector<std::string> moves)
+    {
+        std::vector<ArrayValue> moves_list = {};
+        for(const auto& value: moves)
+        {
+            moves_list.push_back(ArrayValue::Identifier(value));
+        }
+
+        auto it = values_.find("moves");
+        if (it == values_.end())
+        {
+            std::unique_ptr<ArrayValue> v = std::unique_ptr<ArrayValue>(new ArrayValue(ArrayValue::Type::kValueList, std::move(moves_list)));
+            ArrayValue pair = ArrayValue::ValuePair(std::pair<std::string, std::unique_ptr<ArrayValue>>("moves", std::move(v)));
+
+            values_.insert(std::pair<std::string, ArrayValue>("moves", std::move(pair)));
+            return;
+        }
+
+        it->second.pair().second->set_type(ArrayValue::Type::kValueList);
+        it->second.pair().second->set_values(std::move(moves_list));
+    }
 } // namespace fex

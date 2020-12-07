@@ -24,6 +24,7 @@ namespace fex
         void SetHeldItem(const std::string& value);
         void SetLevel(int value);
         void SetIv(int value);
+        void SetMoves(std::vector<std::string> moves);
 
     private:
         PokemonValue(std::map<std::string, ArrayValue> values): values_(std::move(values))  {}

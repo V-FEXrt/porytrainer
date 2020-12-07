@@ -100,6 +100,11 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(pokemon_ui_item.item, &QComboBox::textActivated, this, &MainWindow::on_pokemonHeldItem_activated);
         connect(pokemon_ui_item.level, &QSpinBox::textChanged, this, &MainWindow::on_pokemonLevel_textChanged);
         connect(pokemon_ui_item.iv, &QSpinBox::textChanged, this, &MainWindow::on_pokemonIv_textChanged);
+
+        connect(pokemon_ui_item.move_1, &QComboBox::textActivated, this, &MainWindow::on_pokemonMoves_activated);
+        connect(pokemon_ui_item.move_2, &QComboBox::textActivated, this, &MainWindow::on_pokemonMoves_activated);
+        connect(pokemon_ui_item.move_3, &QComboBox::textActivated, this, &MainWindow::on_pokemonMoves_activated);
+        connect(pokemon_ui_item.move_4, &QComboBox::textActivated, this, &MainWindow::on_pokemonMoves_activated);
     }
 }
 
@@ -490,5 +495,27 @@ void MainWindow::on_pokemonIv_textChanged(const QString & /*value*/)
     for(unsigned int i = 0; i < size; i++)
     {
         pokemon[i]->SetIv(pokemon_ui_items_[i].iv->value());
+    }
+}
+
+void MainWindow::on_pokemonMoves_activated(const QString &/*arg1*/)
+{
+    auto it = trainers_.find(ui_->listWidget_trainers->currentItem()->text());
+    if (it == trainers_.end()) {
+        return;
+    }
+
+    auto& pokemon =  it->second->mutable_party();
+    unsigned int size = pokemon.size();
+    for(unsigned int i = 0; i < size; i++)
+    {
+        std::vector<std::string> moves;
+
+        moves.push_back(pokemon_ui_items_[i].move_1->currentText().toStdString());
+        moves.push_back(pokemon_ui_items_[i].move_2->currentText().toStdString());
+        moves.push_back(pokemon_ui_items_[i].move_3->currentText().toStdString());
+        moves.push_back(pokemon_ui_items_[i].move_4->currentText().toStdString());
+
+        pokemon[i]->SetMoves(std::move(moves));
     }
 }
